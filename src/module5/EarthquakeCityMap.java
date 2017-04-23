@@ -183,7 +183,7 @@ public class EarthquakeCityMap extends PApplet {
 		// if nothing has been clicked
 		if (lastClicked == null) {
 			// check if this click was in any of my markers
-			checkForLastClicked();
+			checkForLastMarkerClicked();
 			// if it was, lastClicked will be that marker
 			// otherwise return
 			if (lastClicked == null) {
@@ -191,33 +191,12 @@ public class EarthquakeCityMap extends PApplet {
 			}
 			// if it was an earthquake
 			if (lastClicked instanceof EarthquakeMarker) {
-				// hide all cities outside threatCircle
-				for (Marker marker : cityMarkers) {
-					if (marker.getDistanceTo(lastClicked.getLocation()) > ((EarthquakeMarker) lastClicked).threatCircle()) {
-						marker.setHidden(true);
-					}
-				}
-				// hide all quakes not clicked
-				for (Marker marker : quakeMarkers) {
-					if (!((CommonMarker) marker).getClicked()) {
-						marker.setHidden(true);
-					}
-				}
+				handleEQclick();
+				return;
 			}
 			// if it was a city
 			if (lastClicked instanceof CityMarker) {
-				// hide all cities except clicked city
-				for (Marker marker : cityMarkers) {
-					if (!((CommonMarker) marker).getClicked()) {
-						marker.setHidden(true);
-					}
-				}
-				// hide all quakes that contain the clicked city in their threatCircle
-				for (Marker marker : quakeMarkers) {
-					if (lastClicked.getDistanceTo(marker.getLocation()) > ((EarthquakeMarker) marker).threatCircle()) {
-						marker.setHidden(true);
-					}
-				}	
+				handleCityClick();	
 			}			
 		}
 		// if something was already clicked and they clicked again
@@ -230,7 +209,37 @@ public class EarthquakeCityMap extends PApplet {
 		}
 	}
 
-	private void checkForLastClicked() {
+	private void handleCityClick() {
+		// hide all cities except clicked city
+		for (Marker marker : cityMarkers) {
+			if (!((CommonMarker) marker).getClicked()) {
+				marker.setHidden(true);
+			}
+		}
+		// hide all quakes that contain the clicked city in their threatCircle
+		for (Marker marker : quakeMarkers) {
+			if (lastClicked.getDistanceTo(marker.getLocation()) > ((EarthquakeMarker) marker).threatCircle()) {
+				marker.setHidden(true);
+			}
+		}
+	}
+
+	private void handleEQclick() {
+		// hide all cities outside threatCircle
+		for (Marker marker : cityMarkers) {
+			if (marker.getDistanceTo(lastClicked.getLocation()) > ((EarthquakeMarker) lastClicked).threatCircle()) {
+				marker.setHidden(true);
+			}
+		}
+		// hide all quakes not clicked
+		for (Marker marker : quakeMarkers) {
+			if (!((CommonMarker) marker).getClicked()) {
+				marker.setHidden(true);
+			}
+		}
+	}
+
+	private void checkForLastMarkerClicked() {
 		// only deal with empty lastClicked
 		if (lastClicked != null) {
 			return;
